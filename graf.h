@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct{
     int p;
@@ -28,7 +29,7 @@ struct Q{
 
 typedef struct Q Queue ;
 
-Graph *create(FILE* fin,Queue* final);
+Graph *create(FILE* fin,FILE* out_score);
 
 void printGraph(FILE* fout , Graph *g);
 
@@ -39,3 +40,7 @@ Queue* createQueue();
 void enQueue (Queue*q,Echipa* v);
 
 Echipa* deQueue(Queue*q);
+
+void afisare_score(FILE* fout,Queue *final,Graph*g);
+
+float prestigiu (int victorii);

@@ -46,7 +46,7 @@ void resetQueue(Queue* q) {
 }
 
 
-Graph *create(FILE *fin,Queue* final) {
+Graph *create(FILE *fin,FILE* out_score) {
     int i;
     Graph *g = (Graph *)malloc(sizeof(Graph));
     if (g == NULL) {
@@ -105,48 +105,53 @@ Graph *create(FILE *fin,Queue* final) {
 
     Queue *currentRound = createQueue();
     Queue *nextRound = createQueue();
-    
+
 
     for (i = 0; i < 32; i++) {
         enQueue(currentRound, echipe[i]);
     }
 
-    for (int round = 0; round < 5; round++) {
+    for (int round = 0; round < 6; round++) {
         while (!isEmptyq(currentRound)) {
             Echipa *echipa1 = deQueue(currentRound);
             Echipa *echipa2 = deQueue(currentRound);
 
             if (echipa1 == NULL || echipa2 == NULL) {
-                if (echipa1 != NULL) enQueue(final, echipa1);
+                if (echipa1 != NULL) fprintf(out_score,"%.4f %s\n",prestigiu(round),echipa1->nume_echipa);
                 break;
             }
 
             if (echipa1->score > echipa2->score) {
                 g->m[echipa2->p][echipa1->p] = 1;
                 enQueue(nextRound, echipa1);
-                enQueue(final, echipa2);
+               fprintf(out_score,"%.4f %s\n",prestigiu(round),echipa2->nume_echipa);
+
             } else if (echipa1->score < echipa2->score) {
                 g->m[echipa1->p][echipa2->p] = 1;
                 enQueue(nextRound, echipa2);
-                enQueue(final, echipa1);
+                fprintf(out_score,"%.4f %s\n",prestigiu(round),echipa1->nume_echipa);
             } else {
                 if (strcmp(echipa1->nume_echipa, echipa2->nume_echipa) > 0) {
                     g->m[echipa2->p][echipa1->p] = 1;
                     enQueue(nextRound, echipa1);
-                    enQueue(final, echipa2);
+                    fprintf(out_score,"%.4f %s\n",prestigiu(round),echipa2->nume_echipa);
                 } else {
                     g->m[echipa1->p][echipa2->p] = 1;
                     enQueue(nextRound, echipa2);
-                    enQueue(final, echipa1);
+                    fprintf(out_score,"%.4f %s\n",prestigiu(round),echipa1->nume_echipa);
                 }
             }
         }
 
+        
         while (!isEmptyq(nextRound)) {
-            enQueue(currentRound, deQueue(nextRound));
+            Echipa* aux = deQueue(nextRound);
+            enQueue(currentRound, aux);
+            // enQueue(*final,aux);
         }
     }
-
+    
+    
     return g;
 }
 
@@ -162,3 +167,18 @@ void printGraph(FILE* fout , Graph *g){
         fprintf(fout,"\n");  
     }
 }
+float prestigiu (int victorii){
+    float points=(float)((0.15*power(1.85,victorii))/((64+power(1.85,6)*(-0.85))));
+    return points;
+}
+
+float power(float base, int exponent) {
+    float result = 1.0;
+    for (int i = 0; i < exponent; i++) {
+        result *= base;
+    }
+    return result;
+}
+
+
+

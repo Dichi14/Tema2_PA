@@ -16,9 +16,14 @@ int main(int argc,char* argv[]){
     if(!fout_score){
         return 1;
     }
-    Queue* final= createQueue();
-    Graph *g = create(fin,final);
+    
+    Graph *g = create(fin,fout_score);
     printGraph(fout_graf,g);
+
+    fclose(fin);
+    fclose(fout_graf);
+
+    // afisare_score(fout_score,final,g);
 
     for (int i = 0; i < g->varfuri; i++) {
         free(g->m[i]);
@@ -26,8 +31,7 @@ int main(int argc,char* argv[]){
     free(g->m);
     free(g);
 
-    fclose(fin);
-    fclose(fout_graf);
+   
     fclose(fout_score);
 
    return 0;
